@@ -6,8 +6,8 @@ from eth_account.messages import encode_defunct
 
 def recover_account(author: str) -> bool:
     try:
-        message_text = os.environ.get("FIXED_MESSAGE", "Please sign to retrieve your encryption key")
-        signature = os.environ.get("SIGNATURE", "0x0657fd96b385e99d1d76f8d9a27d45cbbe78489bb57325ccbaf642535dfeb1d455223d71fdbb77ce9c12a7e97ca772b1397ac56d29e30e0cd7adee4561e6ce051b")
+        message_text = os.environ.get("FIXED_MESSAGE")
+        signature = os.environ.get("SIGNATURE")
 
         # Encode the message properly
         message_encoded = encode_defunct(text=message_text)
