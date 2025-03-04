@@ -36,11 +36,14 @@ class Proof:
         """Generate proofs for all input files."""
         logging.info("Starting proof generation")
 
-        # Read the wallet address from the first .txt file in the input directory
-        txt_files = [f for f in os.listdir(self.config['input_dir']) if f.endswith('.txt')]
-        if txt_files:
-            self.wallet_address = self.read_author_from_file(os.path.join(self.config['input_dir'], txt_files[0])).lower()
-            logging.info(f"Wallet Address {self.wallet_address}")
+        json_files = [f for f in os.listdir(self.config['input_dir']) if f.endswith('.json')]
+
+        json_file_path = os.path.join(self.config['input_dir'], json_files[0])
+        with open(json_file_path, 'r') as json_file:
+            wallet_data = json.load(json_file)
+            self.wallet_address = wallet_data.get("userAddress").lower()
+        
+        print(f"wallet address from proof is",self.wallet_address)
 
         uniqueness_details_ = uniqueness_details(self.wallet_address, self.config['input_dir'] )
         unique_tokens = uniqueness_details_.get("unique_json_data", [])
@@ -63,6 +66,7 @@ class Proof:
         # Additional metadata about the proof, written onchain
         for item in metadata:
             item["ownership"] = ownership_score 
+            token_address = item["token_submitted"]
             item["score"] = (item["authenticity"] + item["quality"] + item["uniqueness"] + ownership_score) / 4  # Compute avg score
 
         self.proof_response.metadata = {
